@@ -1,6 +1,6 @@
 module Roxe
   class Http
-    DEFAULT_HEADERS = { 'User-Agent' => 'Sush.io' , 'charset' => 'utf-8' }
+    DEFAULT_HEADERS = { 'User-Agent' => 'Sush.io', 'charset' => 'utf-8' }
 
     attr_reader :oauth, :api_url
 
@@ -12,13 +12,15 @@ module Roxe
     end
 
     def get(resource)
-      oauth.access_token.get(uri(resource).request_uri, request_headers)
+      response = oauth.access_token.get(request_uri(resource),
+                                        request_headers)
+      Response.new(response: response, resource: resource).build
     end
 
     private
 
-    def uri(resource)
-      URI.parse("#{api_url}/#{resource.to_s.capitalize}")
+    def request_uri(resource)
+      URI.parse("#{api_url}/#{resource.to_s.capitalize}").request_uri
     end
 
     def request_headers
