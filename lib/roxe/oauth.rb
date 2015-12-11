@@ -14,8 +14,6 @@ module Roxe
       @secret          = credentials[:secret]
     end
 
-    # delegate to access_token
-
     def consumer
       ::OAuth::Consumer.new(consumer_key, consumer_secret, connexion.options).tap do |c|
         c.http.cert = connexion.ssl_client_cert

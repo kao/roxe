@@ -10,9 +10,7 @@ module Roxe
                         signature_method: 'RSA-SHA1',
                         rate_limit_sleep: 2 }.freeze
 
-    attr_reader :request_token_path, :access_token_path, :authorize_path,
-                :site, :api_url, :authorize_url,
-                :signature_method, :rate_limit_sleep, :private_key_file_path,
+    attr_reader :api_url, :private_key_file_path,
                 :ssl_client_cert_path, :ssl_client_key_path,
                 :consumer_key, :consumer_secret
 
@@ -20,7 +18,7 @@ module Roxe
     #               ssl_client_cert_path, ssl_client_key_path,
     #               private_key_file_path]
     def initialize(options: {})
-      options.each do |k, v|
+      DEFAULT_OPTIONS.merge(options).each do |k, v|
         instance_variable_set("@#{k}", v)
       end
     end

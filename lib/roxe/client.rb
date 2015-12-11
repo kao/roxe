@@ -16,6 +16,10 @@ module Roxe
       Roxe::OAuth.new(connexion: connexion, credentials: credentials)
     end
 
+    def http
+      Http.new(oauth: oauth, api_url: connexion.api_url)
+    end
+
     private
 
     def request_headers
