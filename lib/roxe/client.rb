@@ -16,11 +16,8 @@ module Roxe
       Roxe::OAuth.new(connexion: connexion, credentials: credentials)
     end
 
-    def method_missing(method, *args, &block)
-      return super unless Roxe::HTTP_VERBS.include?(method)
-
-      Roxe::Http.send(method,
-                      oauth: oauth, api_url: connexion.api_url, args: args)
+    def http
+      Roxe::Http.new(oauth: oauth, api_url: connexion.api_url)
     end
 
     def renew_access_token(oauth_session_handle)

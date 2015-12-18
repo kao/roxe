@@ -6,5 +6,4 @@ require 'roxe/response'
 require 'roxe/client'
 
 module Roxe
-  HTTP_VERBS = %i(get)
 end
