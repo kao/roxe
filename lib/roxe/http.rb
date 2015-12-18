@@ -1,20 +1,27 @@
 module Roxe
   class Http
-    DEFAULT_HEADERS = { 'User-Agent' => 'Sush.io', 'charset' => 'utf-8' }
+    DEFAULT_HEADERS = { 'charset' => 'utf-8' }
 
-    attr_reader :oauth, :api_url
+    attr_reader :oauth, :api_url, :options
 
     # oauth: Roxe::OAuth
     # api_url: Xero Remote API URL
-    def initialize(oauth:, api_url:)
+    def initialize(oauth:, api_url:, options:)
       @oauth   = oauth
       @api_url = api_url
+      @options = options
     end
 
-    def get(resource)
-      response = oauth.access_token.get(request_uri(resource),
+    def self.method_missing(method, *args, &block)
+      return super unless Roxe::HTTP_VERBS.include?(method)
+
+      new(*args).send(method)
+    end
+
+    def get
+      response = oauth.access_token.get(request_uri(*options),
                                         request_headers)
-      Response.new(response: response, resource: resource).build
+      Roxe::Response.new(response: response, resource: options[0]).build
     end
 
     private
@@ -24,7 +31,11 @@ module Roxe
     end
 
     def request_headers
-      DEFAULT_HEADERS
+      DEFAULT_HEADERS.merge('User-Agent' => user_agent)
+    end
+
+    def user_agent
+      'RoxeRubyGem/#{Roxe::VERSION}'
     end
   end
 end

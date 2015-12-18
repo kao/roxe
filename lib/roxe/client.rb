@@ -16,8 +16,11 @@ module Roxe
       Roxe::OAuth.new(connexion: connexion, credentials: credentials)
     end
 
-    def http
-      Http.new(oauth: oauth, api_url: connexion.api_url)
+    def method_missing(method, *args, &block)
+      return super unless Roxe::HTTP_VERBS.include?(method)
+
+      Roxe::Http.send(method,
+                      oauth: oauth, api_url: connexion.api_url, options: args)
     end
 
     def renew_access_token(oauth_session_handle)
@@ -30,14 +33,6 @@ module Roxe
     end
 
     private
-
-    def request_headers
-      { 'User-Agent' => user_agent }
-    end
-
-    def user_agent
-      @user_agent ||= 'RoxeRubyGem/#{Roxe::VERSION}'
-    end
 
     def credentials
       { consumer_key: connexion.consumer_key,
