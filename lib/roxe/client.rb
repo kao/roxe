@@ -20,7 +20,7 @@ module Roxe
       return super unless Roxe::HTTP_VERBS.include?(method)
 
       Roxe::Http.send(method,
-                      oauth: oauth, api_url: connexion.api_url, options: args)
+                      oauth: oauth, api_url: connexion.api_url, args: args)
     end
 
     def renew_access_token(oauth_session_handle)
