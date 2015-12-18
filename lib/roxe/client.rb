@@ -20,6 +20,15 @@ module Roxe
       Http.new(oauth: oauth, api_url: connexion.api_url)
     end
 
+    def renew_access_token(oauth_session_handle)
+      new_token, new_secret = *oauth.renew_access_token(oauth_session_handle)
+
+      self.token = new_token
+      self.secret = new_secret
+
+      { token: new_token, secret: new_secret }
+    end
+
     private
 
     def request_headers
