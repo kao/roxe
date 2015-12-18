@@ -9,11 +9,11 @@ module Roxe
     # resource: Symbol
     def initialize(response:, resource:)
       @response = Hash.from_xml(response.body)['Response']
-      @resource = resource
+      @resource = resource.to_s.capitalize
     end
 
     def build
-      response[resource.to_s.capitalize][resource.to_s.capitalize.singularize]
+      response[resource][resource.singularize]
     end
   end
 end

@@ -1,6 +1,7 @@
 module Roxe
   class Http
-    DEFAULT_HEADERS = { 'charset' => 'utf-8' }
+    DEFAULT_HEADERS = { 'charset' => 'utf-8',
+                        'Content-Type' => 'application/x-www-form-urlencoded' }
 
     attr_reader :oauth, :api_url
     attr_accessor :endpoint
@@ -15,10 +16,23 @@ module Roxe
     def get(resource, options = {})
       response = oauth.access_token.get(request_uri(resource, options),
                                         request_headers)
-      Roxe::Response.new(response: response, resource: resource).build
+      build(response, resource)
+    end
+
+    def post(resource, options = {})
+      xml = options.to_xml(root: resource.to_s.singularize.classify)
+      response = oauth.access_token.post(request_uri(resource),
+                                         { xml: xml },
+                                         request_headers)
+      build(response, resource)
     end
 
     private
+
+    def build(response, resource)
+      resource = resource.to_s.capitalize
+      Hash.from_xml(response.body)['Response'][resource][resource.singularize]
+    end
 
     def request_uri(resource, options = {})
       method = caller[0] =~ /`([^']*)/ && $1.to_sym
