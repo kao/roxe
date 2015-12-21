@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext'
+
 module Roxe
   class Http
     DEFAULT_HEADERS = { 'charset' => 'utf-8',
@@ -38,8 +41,12 @@ module Roxe
       method = caller[0] =~ /`([^']*)/ && $1.to_sym
       url = "#{api_url}/#{resource.to_s.capitalize}"
 
-      if method == :get && options[:identifier]
+      return URI.parse(url).request_uri if method != :get
+
+      if options[:identifier]
         url.concat("/#{options[:identifier]}")
+      elsif options[:where]
+        url.concat("?where=#{options[:where]}")
       end
 
       URI.parse(url).request_uri
